@@ -230,12 +230,6 @@ ref = []
 res_meet = model.transcribe(FILE_PATH, verbose=False, language="ja")
 embed_meet = generate_speaker_embeddings(FILE_PATH,res_meet)
 
-# for name, file in FILE_PATH_DICT.items():
-#     res = model.transcribe(file, verbose=False, language="ja")
-#     embed = generate_speaker_embeddings(file,res)
-#     #clus_embed = clustering_embeddings(num_people, embed)
-#     #format_out = format_speaker_output_by_segment(clus_embed, res)
-#     ref.append((name,embed))
     
 for id, row in df.iterrows():
     res = model.transcribe(row['file_path'], verbose=False, language="ja")
