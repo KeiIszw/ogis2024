@@ -210,14 +210,42 @@ FILE_PATH = "./resource/record241023/meeting_take2_mono.wav"
 #                   "isizawa": "../resource/meeting_voice/ishizawa_sample.wav",
 #                   "shibasaki": "../resource/onsei_kaigi1015/shibasaki_sample.wav"}
 
-# 話者の情報をcsvファイルから取得
-# import csv file that included name and sex from web app.
-# csv_file = "name,sex" # dummy
-# # DictReaderでCSVを読み込み、各行をディクショナリに変換
-# csv_reader = csv.DictReader(csv_file)
-# # 全ての行をディクショナリのリストに格納
-# data = [row for row in csv_reader]
 
+# 話者の情報をDjangoのmodelから取得
+
+# wavファイルを保存するディレクトリ
+output_dir = Path("sampleVoices")
+output_dir.mkdir(exist_ok=True)
+
+# すべてのオブジェクトを取得
+speaker_models = speaker_model.objects.all()
+
+data = [] # 辞書リストを格納するためのリスト
+
+# Base64をデコードしてwavファイルに保存
+for speaker_model in speaker_models:
+    # Base64データのデコード
+    wav_data = base64.b64decode(speaker_model.audio_base64)
+
+    # 出力ファイル名の作成
+    file_name = output_dir / f"{speaker_model.name}.wav"
+
+    # wavファイルとして保存
+    with open(file_name, "wb") as audio_file:
+        audio_file.write(wav_data)
+
+    # データをリストに追加
+    data.append({
+        "file_path" : str(file_name),
+        "name" : speaker_model.name,
+        "sex" : speaker_model.sex
+    })
+
+# データフレームに変換
+speaker_df = pd.DataFrame(data)
+
+
+# temp df
 df = pd.DataFrame(
     [["./resource/record241023/sample_hanagata.wav","hanagata", "male"],
     ["./resource/record241023/sample_ishizawa.wav","isizawa", "male"],
